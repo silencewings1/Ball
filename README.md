@@ -1,5 +1,8 @@
 https://github.com/Tabris2016/Push_A_Ball/blob/master/README.md
 
+# git 
+http://blog.leanote.com/post/paprikaxiong/Qt%E4%B8%AD%E9%85%8D%E7%BD%AEGit%E5%B9%B6%E4%B8%8A%E4%BC%A0%E8%87%B3Github-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E5%90%91
+
 # 鼠标推球（暂定）
 
 ## 系统要求
