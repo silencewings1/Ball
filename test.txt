@@ -359,3 +359,96 @@ int main(int argc, char* argv[])
 }
 
 /******************************************************************************/
+
+#include <stdio.h>   
+#include <winsock2.h>   
+#include <WS2tcpip.h>
+#pragma comment(lib,"ws2_32.lib")    
+
+#pragma once
+class CUDP
+{
+private:
+
+	SOCKET sclient;
+	sockaddr_in sin;
+
+	u_short port;
+	PCSTR addr;
+
+public:
+	CUDP(PCSTR _addr, u_short _port);
+	~CUDP();
+
+	void sendMessage(const char * sendData);
+	void sendMessage(double sendData);
+	void sendMessage(double * sendData, int size);
+	void receiveMessage();
+};
+
+
+
+#include "CUDP.h"
+
+
+CUDP::CUDP(PCSTR _addr, u_short _port)
+{
+	WORD socketVersion = MAKEWORD(2, 2);
+	WSADATA wsaData;
+	if (WSAStartup(socketVersion, &wsaData) != 0)
+	{
+		system("pause");
+	}
+	sclient = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+
+	port = _port;
+	addr = _addr;
+
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+	/*sin.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");*/
+	inet_pton(AF_INET, addr, (void*)&sin.sin_addr.S_un.S_addr);
+
+}
+
+
+CUDP::~CUDP()
+{
+	closesocket(sclient);
+	WSACleanup();
+}
+
+
+void CUDP::sendMessage(const char * sendData){
+
+	int len = sizeof(sin);
+	sendto(sclient, sendData, strlen(sendData), 0, (sockaddr *)&sin, len);
+}
+
+void CUDP::sendMessage(double sendData){
+
+	int len = sizeof(sin);
+	sendto(sclient, (const char *)&sendData, sizeof(double), 0, (sockaddr *)&sin, len);
+}
+
+void CUDP::sendMessage(double * sendData,int size){
+
+	int len = sizeof(sin);
+	sendto(sclient, (const char *)sendData, size, 0, (sockaddr *)&sin, len);
+}
+
+void CUDP::receiveMessage(){
+
+	int len = sizeof(sin);
+	char recvData[255];
+	sin.sin_port = htons(5000);
+	int ret = recvfrom(sclient, recvData, 255, 0, (sockaddr *)&sin, &len);
+	if (ret > 0)
+	{
+		recvData[ret] = 0x00;
+		printf(recvData);
+	}
+
+}
+
