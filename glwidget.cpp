@@ -11,6 +11,8 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationZ = -0.0;
     ball.x = 2;
 
+    connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
+
 }
 
 glwidget::~glwidget()
@@ -65,36 +67,33 @@ void glwidget::mousePressEvent(QMouseEvent *event)
 }
 
 void glwidget::mouseReleaseEvent(QMouseEvent *event){
-
+    GLfloat motion[2];
+    motion[0] = GLfloat(event->x() - lastPos.x()) / width();
+    motion[1] = GLfloat(event->y() - lastPos.y()) / height();
+    emit sendMotion(motion);
 }
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
 {
-
-    GLfloat dx = GLfloat(event->x() - lastPos.x()) / width();
-    GLfloat dy = GLfloat(event->y() - lastPos.y()) / height();
-    if(event->buttons() & Qt::LeftButton){
-        rotationX -= 180 * dy;
-        rotationY -= 180 * dx;
-        updateGL();
-    }
-    else if(event->buttons() & Qt::RightButton){
-//        rotationX -= 180 * dy;
-//        rotationZ -= 180 * dx;
-        tranX += 5*dx;
-        tranY -= 5*dy;
-        updateGL();
-    }
-    lastPos = event->pos();
+    //    GLfloat dx = GLfloat(event->x() - lastPos.x()) / width();
+    //    GLfloat dy = GLfloat(event->y() - lastPos.y()) / height();
+    //    if(event->buttons() & Qt::LeftButton){
+    //        rotationX -= 180 * dy;
+    //        rotationY -= 180 * dx;
+    //        updateGL();
+    //    }
+    //    else if(event->buttons() & Qt::RightButton){
+    //        tranX += 5*dx;
+    //        tranY -= 5*dy;
+    //        updateGL();
+    //    }
+    //    lastPos = event->pos();
 }
 
 
 void glwidget::wheelEvent(QWheelEvent *event)
 {
-    //glTranslatef(-event->delta(),-event->delta(),-event->delta());
     tranZ += -event->delta()*0.001f;
-    //qDebug("tranZ: %d",tranZ);
-
     updateGL();
 }
 
@@ -126,10 +125,28 @@ void glwidget::keyPressEvent(QKeyEvent *event){
 
 }
 
+void glwidget::motionDisplay(const float * motion){
+    GLfloat dx = motion[0];
+    GLfloat dy = motion[1];
+    qDebug("Pos: %d %d",dx,dy);
+    GLfloat u = 0.1f;
+    GLfloat t = 0.0f;
+    while(abs(1-u*t)>0.0f){
+        dx *= 1-u*t;
+        dy *= 1-u*t;
+        tranX += dx;
+        tranY -= dy;
+        rotationX += 180.0f*dy;
+        rotationY += 180.0f*dx;
+        t++;
+        Sleep(100);
+        updateGL();
+    }
+}
+
 
 void glwidget::draw()
 {
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //glTranslatef(0.0, 0.0, -5.0);

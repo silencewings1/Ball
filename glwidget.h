@@ -33,6 +33,12 @@ protected:
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
+signals:
+    void sendMotion(const float *);
+
+private slots:
+    void motionDisplay(const float *);
+
 private:
     void draw();
     GLfloat tranX;

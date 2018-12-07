@@ -35,4 +35,4 @@ HEADERS  += mywidget.h \
 
 FORMS    += mywidget.ui
 
-LIBS     += -lfreeglut
+LIBS     += -lglut

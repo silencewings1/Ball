@@ -6,6 +6,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QGLWidget>
+#include <QThread>
 #include "glwidget.h"
 
 
@@ -26,6 +27,7 @@ public:
     explicit myWidget(QWidget *parent = 0);
     ~myWidget();
 
+    QThread threadforball;
 
 private slots:
     void on_pushButton_clicked();

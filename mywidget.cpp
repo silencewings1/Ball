@@ -4,10 +4,7 @@
 #include <QLayout>
 #include "glwidget.h"
 
-
-
 #include <QFileDialog>   //文件对话框
-
 
 #include <QDebug>
 #define cout qDebug()<<"["<<__FILE__<<":"<<__LINE__<<"]"
@@ -18,6 +15,8 @@ myWidget::myWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     QVBoxLayout* mylayout = new QVBoxLayout;
+    Myglwidget->moveToThread(&threadforball);
+    threadforball.start();
     mylayout->addWidget(Myglwidget);
     this->ui->widget->setLayout(mylayout);
 
