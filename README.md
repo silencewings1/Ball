@@ -8,14 +8,14 @@ https://blog.csdn.net/hebbely/article/details/52495073
 https://blog.csdn.net/qing666888/article/details/78946384
 
 # 更新
-12.08 解决无法正常显示gl相关函数的问题
+12.08 解决无法正常显示gl相关函数的问题，加入stl读入接口
 
 # 鼠标推球（暂定）
 
 ## 系统要求
 
 系统环境：
-Qt5; OpenGl; VS2017 or MingW
+Qt5; OpenGl; VS2017 or MingW; Glut
 
 准备工具：
 
