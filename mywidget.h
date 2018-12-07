@@ -34,8 +34,9 @@ private slots:
 
 private:
      QVector<Triangle> triangleList;
-     glwidget*  Myglwidget = new glwidget;
+     //glwidget *Myglwidget = new glwidget;
      Ui::myWidget *ui;
+     glwidget *Myglwidget;
 
 };
 

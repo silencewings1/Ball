@@ -11,7 +11,8 @@
 
 myWidget::myWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::myWidget)
+    ui(new Ui::myWidget),
+    Myglwidget(new glwidget)
 {
     ui->setupUi(this);
     QVBoxLayout* mylayout = new QVBoxLayout;

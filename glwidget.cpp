@@ -10,7 +10,6 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationY = -57.0;
     rotationZ = -0.0;
     ball.x = 2;
-
     connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
 
 }
@@ -22,7 +21,6 @@ glwidget::~glwidget()
 
 void glwidget::initializeGL()
 {
-
     // 启用阴影平滑
     glShadeModel( GL_SMOOTH );
     // 黑色背景

@@ -7,7 +7,7 @@
 #include <QGLWidget>
 #include <QtOpenGL>
 #include "QVector"
-
+//#include "mywidget.h"
 #include <QColorDialog>
 
 #define GLUT_DISABLE_ATEXIT_HACK
