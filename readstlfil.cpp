@@ -145,6 +145,66 @@ int readstlfil::NumTri()
 
 QVector<Triangle> readstlfil::GetTriangleList()
 {
+    QVector<Triangle> zhuanhuan;
+    zhuanhuan = triangleList;
+    float x_max;
+    float x_min;
+
+
+    float max1 = zhuanhuan[0].V[0].x;
+    float min1 = zhuanhuan[0].V[0].x;
+    for(int i = 0;i<zhuanhuan.size();i++)
+    {
+        for(int j = 0;j < 3;j++)
+        {
+            if(max1<zhuanhuan[i].V[j].x)
+            {
+                max1 = zhuanhuan[i].V[j].x;
+            }
+            if(min1>zhuanhuan[i].V[j].x)
+            {
+                min1 = zhuanhuan[i].V[j].x;
+            }
+        }
+    }
+    x_max = max1;
+    x_min = min1;//得到最大的x 的值和最小的x的值
+
+
+    for(int i = 0;i<zhuanhuan.size();i++)
+    {
+        for(int j =0;j<3;j++)
+        {
+            zhuanhuan[i].V[j].x = zhuanhuan[i].V[j].x/(x_max-x_min);
+            zhuanhuan[i].V[j].y = zhuanhuan[i].V[j].y/(x_max-x_min);
+            zhuanhuan[i].V[j].z = zhuanhuan[i].V[j].z/(x_max-x_min);
+        }
+    }
+
+    //    float avg_x = 0;
+    //    float avg_y = 0;
+    //    float avg_z = 0;
+    //    for(int i = 0;i<zhuanhuan.size();i++)
+    //    {
+    //        avg_x += zhuanhuan[i].V[0].x;
+    //        avg_y += zhuanhuan[i].V[0].y;
+    //        avg_z += zhuanhuan[i].V[0].z;
+    //    }
+    //    avg_x = avg_x/zhuanhuan.size();
+    //    avg_y = avg_y/zhuanhuan.size();
+    //    avg_z = avg_z/zhuanhuan.size();
+
+    //    for(int i = 0;i<zhuanhuan.size();i++)
+    //    {
+    //        zhuanhuan[i].V[0].x = zhuanhuan[i].V[0].x- avg_x;
+    //        zhuanhuan[i].V[0].y = zhuanhuan[i].V[0].y- avg_y;
+    //        zhuanhuan[i].V[0].z = zhuanhuan[i].V[0].z- avg_z;
+    //    }
+
+    triangleList = zhuanhuan;
+
+
+
     return triangleList;
 }
 

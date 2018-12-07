@@ -1,8 +1,6 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#endif // TRIANGLE_H
-
 struct Point3f
 {
     float x;
@@ -16,3 +14,4 @@ struct Triangle
     Point3f V[3];
 };
 
+#endif // TRIANGLE_H

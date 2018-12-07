@@ -16,8 +16,8 @@ myWidget::myWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     QVBoxLayout* mylayout = new QVBoxLayout;
-    Myglwidget->moveToThread(&threadforball);
-    threadforball.start();
+    //Myglwidget->moveToThread(&threadforball);
+    //threadforball.start();
     mylayout->addWidget(Myglwidget);
     this->ui->widget->setLayout(mylayout);
 
@@ -28,9 +28,12 @@ myWidget::~myWidget()
     delete ui;
 }
 
+/******************************************************************************
+ *                             Btn Events
+ *****************************************************************************/
 void myWidget::on_pushButton_clicked()
 {
-    QString path = QFileDialog::getOpenFileName(this,"Open","../","STL(*.stl)");
+    QString path = QFileDialog::getOpenFileName(this,"Open","../Ball/resource","STL(*.stl)");
     if(path.isEmpty() == false)
     {
         cout<<"SUCCEFF";
@@ -38,14 +41,14 @@ void myWidget::on_pushButton_clicked()
         QByteArray ba = path.toLocal8Bit();
         const char *cpath = ba.data();
         readstlfil readFile;
-        bool isOk = readFile.ReadFile(cpath);
+        isOk = readFile.ReadFile(cpath);
         //QVector<Triangle> triangleList;
         triangleList = readFile.GetTriangleList();
 
         if(isOk == true)   //读取成功
         {
             cout<<"read successfully";
-
+            Myglwidget->getTriangle(triangleList);
         }
         else
         {

@@ -10,6 +10,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationY = -57.0;
     rotationZ = -0.0;
     ball.x = 2;
+    //！！现在此事件还是死循环！！
     connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
 
 }
@@ -19,6 +20,9 @@ glwidget::~glwidget()
 
 }
 
+/******************************************************************************
+ *                             GL Related
+ *****************************************************************************/
 void glwidget::initializeGL()
 {
     // 启用阴影平滑
@@ -57,8 +61,90 @@ void glwidget::paintGL()
     glLoadIdentity();
     // 重置当前模型的观察矩阵
     draw();
+    if(isRead) drawTri();
 }
 
+void glwidget::draw()
+{
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //glTranslatef(0.0, 0.0, -5.0);
+    glTranslatef(tranX,tranY,tranZ);
+    glRotatef(rotationX, 1.0, 0.0, 0.0);
+    glRotatef(rotationY, 0.0, 1.0, 0.0);
+    glRotatef(rotationZ, 0.0, 0.0, 1.0);
+
+    GLUquadricObj *quadObj; //创建一个二次曲面
+    quadObj = gluNewQuadric();
+    gluQuadricDrawStyle(quadObj,GLU_SILHOUETTE);
+    glShadeModel(GL_SMOOTH);
+    glColor3f(0.0f,0.0f,1.0f);
+    gluSphere(quadObj,0.5f,50.0f,50.0f);
+    gluDeleteQuadric(quadObj);
+    //glutSolidSphere(2,50,50);
+
+}
+
+void glwidget::drawTri()
+{
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //glTranslatef(0.0, 0.0, -5.0);
+    glTranslatef(tranX,tranY,tranZ);
+    glRotatef(rotationX, 1.0, 0.0, 0.0);
+    glRotatef(rotationY, 0.0, 1.0, 0.0);
+    glRotatef(rotationZ, 0.0, 0.0, 1.0);
+
+    double a = 0.5;
+    for(int i = 0;i<myList.size();i++)
+        {
+
+//            glBegin(GL_TRIANGLES);
+//            glColor3f(0.3, 0.3, 1.0);
+//            glNormal3f(mylist[i].N.x,mylist[i].N.y,mylist[i].N.z);
+//            glVertex3f(mylist[i].V[0].x/a,mylist[i].V[0].y/a,mylist[i].V[0].z/a);
+//            glVertex3f(mylist[i].V[1].x/a,mylist[i].V[1].y/a,mylist[i].V[1].z/a);
+//            glVertex3f(mylist[i].V[2].x/a,mylist[i].V[2].y/a,mylist[i].V[2].z/a);
+//            glEnd();
+
+            glBegin(GL_LINES);
+            glColor3f(0.3,0.3,1.0);
+            glVertex3f(myList[i].V[0].x/a,myList[i].V[0].y/a,myList[i].V[0].z/a);
+            glVertex3f(myList[i].V[1].x/a,myList[i].V[1].y/a,myList[i].V[1].z/a);
+
+            glVertex3f(myList[i].V[1].x/a,myList[i].V[1].y/a,myList[i].V[1].z/a);
+            glVertex3f(myList[i].V[2].x/a,myList[i].V[2].y/a,myList[i].V[2].z/a);
+
+            glVertex3f(myList[i].V[2].x/a,myList[i].V[2].y/a,myList[i].V[2].z/a);
+            glVertex3f(myList[i].V[0].x/a,myList[i].V[0].y/a,myList[i].V[0].z/a);
+            glEnd();
+
+//            glShadeModel(GL_FLAT);
+//            glEnable(GL_LIGHTING);
+//            glColor3f(0.4f, 0.4f, 1.0f);
+//            glBegin(GL_TRIANGLES);
+//            glNormal3f(mylist[i].N.x,mylist[i].N.y,mylist[i].N.z);
+//            glVertex3f(mylist[i].V[0].x/a,mylist[i].V[0].y/a,mylist[i].V[0].z/a);
+//            glVertex3f(mylist[i].V[1].x/a,mylist[i].V[1].y/a,mylist[i].V[1].z/a);
+//            glVertex3f(mylist[i].V[2].x/a,mylist[i].V[2].y/a,mylist[i].V[2].z/a);
+//            glEnd();
+//            glDisable(GL_LIGHTING);
+
+        }
+}
+
+void glwidget::getTriangle(QVector<Triangle> triangleList)
+{
+    myList = triangleList;
+    isRead = true;
+}
+
+/******************************************************************************
+ *                             Mouse & Key
+ *****************************************************************************/
 void glwidget::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
@@ -123,6 +209,10 @@ void glwidget::keyPressEvent(QKeyEvent *event){
 
 }
 
+
+/******************************************************************************
+ *                             Logic
+ *****************************************************************************/
 void glwidget::motionDisplay(const float * motion){
     GLfloat dx = motion[0];
     GLfloat dy = motion[1];
@@ -141,26 +231,3 @@ void glwidget::motionDisplay(const float * motion){
         updateGL();
     }
 }
-
-
-void glwidget::draw()
-{
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    //glTranslatef(0.0, 0.0, -5.0);
-    glTranslatef(tranX,tranY,tranZ);
-    glRotatef(rotationX, 1.0, 0.0, 0.0);
-    glRotatef(rotationY, 0.0, 1.0, 0.0);
-    glRotatef(rotationZ, 0.0, 0.0, 1.0);
-
-    GLUquadricObj *quadObj; //创建一个二次曲面
-    quadObj = gluNewQuadric();
-    gluQuadricDrawStyle(quadObj,GLU_SILHOUETTE);
-    glShadeModel(GL_SMOOTH);
-    glColor3f(0.0f,0.0f,1.0f);
-    gluSphere(quadObj,0.5f,50.0f,50.0f);
-    gluDeleteQuadric(quadObj);
-    //glutSolidSphere(2,50,50);
-
-}
-
