@@ -6,7 +6,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QGLWidget>
-#include <QThread>
+//#include <QThread>
 #include "glwidget.h"
 
 
