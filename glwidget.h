@@ -14,7 +14,7 @@
 #include <GL/glut.h>
 
 #include "triangle.h"
-
+//test
 class glwidget : public QGLWidget
 {
     Q_OBJECT
