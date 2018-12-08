@@ -9,6 +9,7 @@ https://blog.csdn.net/qing666888/article/details/78946384
 
 # 更新
 12.08 解决无法正常显示gl相关函数的问题，加入stl读入接口
+12.09 加入camera对象用于调整视角
 
 # 鼠标推球（暂定）
 
