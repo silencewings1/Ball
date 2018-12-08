@@ -7,12 +7,13 @@
 #include <QGLWidget>
 #include <QtOpenGL>
 #include "QVector"
-
+//#include "mywidget.h"
 #include <QColorDialog>
 
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <GL/glut.h>
 
+#include "triangle.h"
 
 class glwidget : public QGLWidget
 {
@@ -21,11 +22,16 @@ public:
     explicit glwidget(QWidget *parent = 0);
     ~glwidget();
 
+    //读写stl的接口函数
+    void getTriangle(QVector<Triangle> triangleList);
+
 protected:
+    //GL related
     void  initializeGL();
     void  resizeGL(int w, int h);
     void  paintGL();
 
+    //mouse & key
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -41,6 +47,10 @@ private slots:
 
 private:
     void draw();
+    void drawTri();
+    QVector<Triangle> myList;
+    bool isRead = false;
+
     GLfloat tranX;
     GLfloat tranY;
     GLfloat tranZ;
