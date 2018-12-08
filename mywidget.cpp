@@ -52,7 +52,7 @@ void myWidget::on_pushButton_clicked()
         }
         else
         {
-            cout<<"FAIL";
+            cout<<"read FAIL";
         }
     }
     else
