@@ -1,16 +1,16 @@
-#include "readstlfil.h"
+#include "stlfile.h"
 
 
 #include <QDebug>
 #define cout qDebug()<<"["<<__FILE__<<":"<<__LINE__<<"]"
 
-readstlfil::readstlfil()
+stlFile::stlFile()
 {
 
 }
 
 
-bool readstlfil::ReadFile(const char *cfilename)
+bool stlFile::ReadFile(const char *cfilename)
 {
     FILE * pFile;
     size_t lSize;
@@ -63,7 +63,7 @@ bool readstlfil::ReadFile(const char *cfilename)
     return true;
 }
 
-bool readstlfil::ReadASCII(const char *buffer)
+bool stlFile::ReadASCII(const char *buffer)
 {
     unTriangles = 0;   //三角面片数量
     triangleList.clear();
@@ -105,7 +105,7 @@ bool readstlfil::ReadASCII(const char *buffer)
     return true;
 }
 
-bool readstlfil::ReadBinary(const char *buffer)
+bool stlFile::ReadBinary(const char *buffer)
 {
     const char* p = buffer;
     char name[80];
@@ -138,12 +138,12 @@ bool readstlfil::ReadBinary(const char *buffer)
     return true;
 }
 
-int readstlfil::NumTri()
+int stlFile::NumTri()
 {
     return unTriangles;
 }
 
-QVector<Triangle> readstlfil::GetTriangleList()
+QVector<Triangle> stlFile::GetTriangleList()
 {
     QVector<Triangle> zhuanhuan;
     zhuanhuan = triangleList;
@@ -208,7 +208,7 @@ QVector<Triangle> readstlfil::GetTriangleList()
     return triangleList;
 }
 
-int readstlfil::cpyint(const char*& p)
+int stlFile::cpyint(const char*& p)
 {
     int cpy;
     memwriter = (char*)&cpy;    //memwriter是cpy的镜像
@@ -216,7 +216,7 @@ int readstlfil::cpyint(const char*& p)
     p += 4;
     return cpy;
 }
-float readstlfil::cpyfloat(const char*& p)
+float stlFile::cpyfloat(const char*& p)
 {
     float cpy;
     memwriter = (char*)&cpy;

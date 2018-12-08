@@ -2,7 +2,7 @@
 #define MYWIDGET_H
 
 #include <QWidget>
-#include "readstlfil.h"
+#include "stlfile.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QGLWidget>

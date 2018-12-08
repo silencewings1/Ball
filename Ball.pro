@@ -25,13 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mywidget.cpp \
-    readstlfil.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    stlfile.cpp
 
 HEADERS  += mywidget.h \
-    readstlfil.h \
     triangle.h \
-    glwidget.h
+    glwidget.h \
+    stlfile.h
 
 FORMS    += mywidget.ui
 
