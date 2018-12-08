@@ -40,7 +40,7 @@ void myWidget::on_pushButton_clicked()
         ui->lineEdit->setText(path);
         QByteArray ba = path.toLocal8Bit();
         const char *cpath = ba.data();
-        readstlfil readFile;
+        stlFile readFile;
         isOk = readFile.ReadFile(cpath);
         //QVector<Triangle> triangleList;
         triangleList = readFile.GetTriangleList();
@@ -52,7 +52,7 @@ void myWidget::on_pushButton_clicked()
         }
         else
         {
-            cout<<"read FAIL";
+            cout<<"read fail";
         }
     }
     else

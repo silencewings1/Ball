@@ -10,10 +10,10 @@
 
 using namespace std;
 
-class readstlfil
+class stlFile
 {
 public:
-    readstlfil();
+    stlFile();
     bool ReadFile(const char *cfilename);
     int NumTri();
     QVector<Triangle> GetTriangleList();
