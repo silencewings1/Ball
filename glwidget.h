@@ -14,6 +14,7 @@
 #include <GL/glut.h>
 
 #include "triangle.h"
+#include "camera.h"
 //test
 class glwidget : public QGLWidget
 {
@@ -52,6 +53,10 @@ private:
     QVector<Triangle> myList;
     bool isRead = false;
 
+    GLCamera cam;
+    void RotateX(float angle);
+    void RotateY(float angle);
+
     GLfloat tranX;
     GLfloat tranY;
     GLfloat tranZ;
@@ -65,6 +70,7 @@ private:
 
     } Ball;
     Ball ball;
+
 
 };
 
