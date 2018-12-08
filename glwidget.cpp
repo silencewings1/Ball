@@ -60,6 +60,7 @@ void glwidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
     glLoadIdentity();
     // 重置当前模型的观察矩阵
+    drawBase();
     draw();
     if(isRead)
         drawTri();
@@ -86,10 +87,40 @@ void glwidget::draw()
 
 }
 
+void glwidget::drawBase()
+{
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(-1.5,-1.5,tranZ);
+    glRotatef(-45, 1.0, 0.0, 0.0);
+    glRotatef(0, 0.0, 1.0, 0.0);
+    glRotatef(0, 0.0, 0.0, 1.0);
+
+    glBegin(GL_POLYGON);
+    glColor3f(0.5,0.50,0.5);
+
+//    glVertex3f(0,0,0);
+//    glVertex3f(0,0,0.5);
+
+    glVertex3f(0,0,0);
+    glVertex3f(3.5,0,0);
+    glVertex3f(3.5,3.5,0);
+    glVertex3f(0,3.5,0);
+
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(1,0,0);
+    glVertex3f(0,0,0);
+    glVertex3f(0,0,3.5);
+    glEnd();
+
+}
+
 void glwidget::drawTri()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
-    glLoadIdentity();
+//    glLoadIdentity();
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();

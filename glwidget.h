@@ -48,6 +48,7 @@ private slots:
 private:
     void draw();
     void drawTri();
+    void drawBase();
     QVector<Triangle> myList;
     bool isRead = false;
 
