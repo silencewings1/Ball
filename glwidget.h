@@ -14,7 +14,8 @@
 #include <GL/glut.h>
 
 #include "triangle.h"
-
+#include "camera.h"
+//test
 class glwidget : public QGLWidget
 {
     Q_OBJECT
@@ -48,8 +49,13 @@ private slots:
 private:
     void draw();
     void drawTri();
+    void drawBase();
     QVector<Triangle> myList;
     bool isRead = false;
+
+    GLCamera cam;
+    void RotateX(float angle);
+    void RotateY(float angle);
 
     GLfloat tranX;
     GLfloat tranY;
@@ -64,6 +70,7 @@ private:
 
     } Ball;
     Ball ball;
+
 
 };
 

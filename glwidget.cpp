@@ -5,12 +5,15 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
     tranX = 0.0;
     tranY = 0.0;
-    tranZ = -10.0;
-    rotationX = -21.0;
-    rotationY = -57.0;
-    rotationZ = -0.0;
+    tranZ = 2.0;    //-10
+    rotationX = 0.0;
+    rotationY = 0.0;
+    rotationZ = 0.0;
+    //rotationX = -21.0;
+    //rotationY = -57.0;
+    //rotationZ = -0.0;
     ball.x = 2;
-    //！！现在此事件还是死循环！！
+
     connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
 
 }
@@ -42,6 +45,10 @@ void glwidget::initializeGL()
 
     setFocusPolicy(Qt::StrongFocus);
 
+    Vector3d pos(0.0, 0.0, 10.0);
+    Vector3d target(0.0, 0.0, 0.0);
+    Vector3d up(0.0, 1.0, 0.0);
+    cam.setCamera(pos, target, up);
 }
 
 void glwidget::resizeGL(int w, int h)
@@ -49,26 +56,32 @@ void glwidget::resizeGL(int w, int h)
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    GLfloat x = GLfloat(w) / h;
+    GLfloat x = GLfloat(w) / GLfloat(h);
     glFrustum(-x,+x,-1.0,+1.0,4.0,15.0);
     glMatrixMode(GL_MODELVIEW);
-
+    //cam.setShape(45.0,x, 0.1, 100.0);
 }
 
 void glwidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
     glLoadIdentity();
+    cam.setModelViewMatrix();
+
     // 重置当前模型的观察矩阵
+    drawBase();
     draw();
     if(isRead)
         drawTri();
+
 }
 
 void glwidget::draw()
 {
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    //RotateX(1);
+    //glLoadIdentity();
+    //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
     glTranslatef(tranX,tranY,tranZ);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
@@ -86,20 +99,52 @@ void glwidget::draw()
 
 }
 
+void glwidget::drawBase()
+{
+    glMatrixMode(GL_MODELVIEW);
+    //glLoadIdentity();
+    //glTranslatef(-1.5,-1.5,tranZ);
+    glTranslatef(0.0,0.0,0.0);
+    glRotatef(0, 1.0, 0.0, 0.0);
+    glRotatef(0, 0.0, 1.0, 0.0);
+    glRotatef(0, 0.0, 0.0, 1.0);
+
+    glBegin(GL_POLYGON);
+    glColor3f(0.5,0.50,0.5);
+
+//    glVertex3f(0,0,0);
+//    glVertex3f(0,0,0.5);
+
+    glVertex3f(0,0,0);
+    glVertex3f(3.5,0,0);
+    glVertex3f(3.5,3.5,0);
+    glVertex3f(0,3.5,0);
+
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(1,0,0);
+    glVertex3f(0,0,0);
+    glVertex3f(0,0,3.5);
+    glEnd();
+
+}
+
 void glwidget::drawTri()
 {
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
-    glLoadIdentity();
+    //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
+    //glLoadIdentity();
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    //glLoadIdentity();
+    //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
-    glTranslatef(tranX,tranY,tranZ);
+    glTranslatef(tranX,tranY,tranZ-3.0);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
 
-    GLfloat a = 0.5f;
+    GLfloat a = 1.0f;
     for(int i = 0;i<myList.size();i++)
     {
 
@@ -173,20 +218,76 @@ void glwidget::mouseMoveEvent(QMouseEvent *event)
     //        updateGL();
     //    }
     //    lastPos = event->pos();
+    int dx = event->x() - lastPos.x();
+    int dy = event->y() - lastPos.y();
+    //qDebug("dx:%d,dy:%d",dx,dy);
+    if (event->buttons() & Qt::RightButton)
+    {
+        //右键绕x，y轴旋转
+        RotateX(dx);
+        RotateY(dy);
+        lastPos = event->pos();
+    }
+    else if(event->buttons() & Qt::MiddleButton)
+    {
+        //中键平移
+        cam.slide(-(float)dx*0.01f,(float)dy*0.01f,0);
+        lastPos = event->pos();
+    }
+    updateGL();
 }
-
 
 void glwidget::wheelEvent(QWheelEvent *event)
 {
-    tranZ += -event->delta()*0.001f;
+    //tranZ += -event->delta()*0.001f;
+    int dz=-event->delta()*0.01f;
+    cam.slide(0,0,dz);
     updateGL();
 }
 
 //#include <QKeyEvent>
-void glwidget::keyPressEvent(QKeyEvent *event){
-
+void glwidget::keyPressEvent(QKeyEvent *event)
+{
     // Test KeyPress
     switch(event->key()){
+
+    //相机平动
+    case Qt::Key_W:
+        cam.slide(0,0.2f,0);
+        updateGL();
+        break;
+    case Qt::Key_S:
+        cam.slide(0,-0.2f,0);
+        updateGL();
+        break;
+    case Qt::Key_A:
+        cam.slide(-0.2f,0,0);
+        updateGL();
+        break;
+    case Qt::Key_D:
+        cam.slide(0.2f,0,0);
+        updateGL();
+        break;
+
+    //相机转动
+    case Qt::Key_I:
+        RotateY(-1.0f);
+        updateGL();
+        break;
+    case Qt::Key_M:
+        RotateY(1.0f);
+        updateGL();
+        break;
+    case Qt::Key_Q:
+        RotateX(-1.0f);
+        updateGL();
+        break;
+    case Qt::Key_E:
+        RotateX(1.0f);
+        updateGL();
+        break;
+
+    //其他
     case Qt::Key_L:
         qDebug("Key_L ");
         break;
@@ -217,7 +318,7 @@ void glwidget::keyPressEvent(QKeyEvent *event){
 void glwidget::motionDisplay(const float * motion){
     GLfloat dx = motion[0];
     GLfloat dy = motion[1];
-    qDebug("Pos: %d %d",dx,dy);
+    qDebug("Pos: %f %f",dx,dy);
     GLfloat u = 0.1f;
     GLfloat t = 0.0f;
     while(abs(1-u*t)>0.0f){
@@ -231,4 +332,35 @@ void glwidget::motionDisplay(const float * motion){
         Sleep(100);
         updateGL();
     }
+}
+
+
+void glwidget::RotateX(float angle)
+{
+    float d=cam.getDist();
+    int cnt=100;
+    float theta=angle/cnt;
+    float slide_d=-2*d*sin(theta*3.14159265/360);
+    cam.yaw(theta/2);
+    for(;cnt!=0;--cnt)
+    {
+        cam.slide(slide_d,0,0);
+        cam.yaw(theta);
+    }
+    cam.yaw(-theta/2);
+}
+
+void glwidget::RotateY(float angle)
+{
+    float d=cam.getDist();
+    int cnt=100;
+    float theta=angle/cnt;
+    float slide_d=2*d*sin(theta*3.14159265/360);
+    cam.pitch(theta/2);
+    for(;cnt!=0;--cnt)
+    {
+        cam.slide(0,slide_d,0);
+        cam.pitch(theta);
+    }
+    cam.pitch(-theta/2);
 }

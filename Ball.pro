@@ -26,12 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mywidget.cpp \
     glwidget.cpp \
-    stlfile.cpp
+    stlfile.cpp \
+    camera.cpp
 
 HEADERS  += mywidget.h \
     triangle.h \
     glwidget.h \
-    stlfile.h
+    stlfile.h \
+    camera.h \
+    eigen.h
 
 FORMS    += mywidget.ui
 
