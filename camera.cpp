@@ -1,18 +1,6 @@
 #include "camera.h"
 
- /* 构造函数 */
-/*
-fixCamera::fixCamera()
-{
-
-}
-
-fixCamera::~fixCamera()
-{
-
-}
-*/
-/* 设置摄像机的位置,朝向和向上向量 */
+//设置摄像机的位置,朝向和向上向量
 void GLCamera::setCamera(const Vector3d& pos, const Vector3d& target, const Vector3d& up)
 {
     //构造向量
@@ -31,7 +19,7 @@ void GLCamera::setCamera(const Vector3d& pos, const Vector3d& target, const Vect
     setModelViewMatrix();
 }
 
-/* 计算变换后的视点矩阵*/
+//计算变换后的视点矩阵
 void GLCamera::setModelViewMatrix()
 {
     double m[16];
@@ -43,7 +31,7 @@ void GLCamera::setModelViewMatrix()
     glLoadMatrixd(m);     //用M矩阵替换原视点矩阵
 }
 
-/* 摄像机初始化*/
+//摄像机初始化
 void GLCamera::setShape(float viewAngle, float aspect, float Near, float Far)
 {
     glMatrixMode(GL_PROJECTION);
@@ -51,7 +39,7 @@ void GLCamera::setShape(float viewAngle, float aspect, float Near, float Far)
     gluPerspective(viewAngle,aspect, Near, Far);        //对投影矩阵进行透视变换
 }
 
-/* 获取eye到坐标原点的距离 */
+//获取eye到坐标原点的距离
 float GLCamera::getDist()
 {
     float dist = pow(m_pos.x(),2)+pow(m_pos.y(),2)+pow(m_pos.z(),2);

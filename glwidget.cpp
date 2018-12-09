@@ -14,7 +14,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     //rotationZ = -0.0;
     ball.x = 2;
 
-    //connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
+    connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
 
 }
 
@@ -200,7 +200,7 @@ void glwidget::mouseReleaseEvent(QMouseEvent *event){
     GLfloat motion[2];
     motion[0] = GLfloat(event->x() - lastPos.x()) / width();
     motion[1] = GLfloat(event->y() - lastPos.y()) / height();
-    //emit sendMotion(motion);
+    emit sendMotion(motion);
 }
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
@@ -226,19 +226,14 @@ void glwidget::mouseMoveEvent(QMouseEvent *event)
         //右键绕x，y轴旋转
         RotateX(dx);
         RotateY(dy);
-    }
-    else if(event->buttons() & Qt::LeftButton)
-    {
-        //左键绕z轴旋转->之后需要考虑键位占用的问题
-        cam.roll(-dx);
-        //cam.slide(0,0,-dy);
+        lastPos = event->pos();
     }
     else if(event->buttons() & Qt::MiddleButton)
     {
         //中键平移
         cam.slide(-(float)dx*0.01f,(float)dy*0.01f,0);
+        lastPos = event->pos();
     }
-    lastPos = event->pos();
     updateGL();
 }
 
@@ -251,10 +246,48 @@ void glwidget::wheelEvent(QWheelEvent *event)
 }
 
 //#include <QKeyEvent>
-void glwidget::keyPressEvent(QKeyEvent *event){
-
+void glwidget::keyPressEvent(QKeyEvent *event)
+{
     // Test KeyPress
     switch(event->key()){
+
+    //相机平动
+    case Qt::Key_W:
+        cam.slide(0,0.2f,0);
+        updateGL();
+        break;
+    case Qt::Key_S:
+        cam.slide(0,-0.2f,0);
+        updateGL();
+        break;
+    case Qt::Key_A:
+        cam.slide(-0.2f,0,0);
+        updateGL();
+        break;
+    case Qt::Key_D:
+        cam.slide(0.2f,0,0);
+        updateGL();
+        break;
+
+    //相机转动
+    case Qt::Key_I:
+        RotateY(-1.0f);
+        updateGL();
+        break;
+    case Qt::Key_M:
+        RotateY(1.0f);
+        updateGL();
+        break;
+    case Qt::Key_Q:
+        RotateX(-1.0f);
+        updateGL();
+        break;
+    case Qt::Key_E:
+        RotateX(1.0f);
+        updateGL();
+        break;
+
+    //其他
     case Qt::Key_L:
         qDebug("Key_L ");
         break;
@@ -285,7 +318,7 @@ void glwidget::keyPressEvent(QKeyEvent *event){
 void glwidget::motionDisplay(const float * motion){
     GLfloat dx = motion[0];
     GLfloat dy = motion[1];
-    qDebug("Pos: %d %d",dx,dy);
+    qDebug("Pos: %f %f",dx,dy);
     GLfloat u = 0.1f;
     GLfloat t = 0.0f;
     while(abs(1-u*t)>0.0f){
