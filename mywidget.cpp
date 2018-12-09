@@ -60,3 +60,11 @@ void myWidget::on_pushButton_clicked()
         cout<<"文件路径获取失败";
     }
 }
+
+/******************************************************************************
+ *                            Silder Events
+ *****************************************************************************/
+void myWidget::on_horizontalSlider_valueChanged(int value)
+{
+    Myglwidget->setFrictionCof(GLfloat(value)/100.0f);
+}

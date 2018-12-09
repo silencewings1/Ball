@@ -9,13 +9,13 @@
 #include "QVector"
 //#include "mywidget.h"
 #include <QColorDialog>
+#include <QTimer>
 
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <GL/glut.h>
-
 #include "triangle.h"
 #include "camera.h"
-//test
+
 class glwidget : public QGLWidget
 {
     Q_OBJECT
@@ -25,6 +25,7 @@ public:
 
     //读写stl的接口函数
     void getTriangle(QVector<Triangle> triangleList);
+    void setFrictionCof(GLfloat value){this->u = value;}
 
 protected:
     //GL related
@@ -40,11 +41,8 @@ protected:
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
-signals:
-    void sendMotion(const float *);
-
 private slots:
-    void motionDisplay(const float *);
+    void motionDisplay();
 
 private:
     void draw();
@@ -64,13 +62,14 @@ private:
     GLfloat rotationY;
     GLfloat rotationZ;
     QPoint lastPos;
-    typedef struct b //定义储存球体的结构
-    {
-        GLfloat x;
 
-    } Ball;
-    Ball ball;
+    GLfloat u; //friction cof
 
+    struct Motion{
+        GLfloat dx;
+        GLfloat dy;
+    };
+    Motion motion;
 
 };
 

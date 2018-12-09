@@ -17,7 +17,7 @@ bool stlFile::ReadFile(const char *cfilename)
     char* buffer;
     size_t result;
 
-    /* 若要一个byte不漏地读入整个文件，只能采用二进制方式打开 */
+    // 若要一个byte不漏地读入整个文件，只能采用二进制方式打开
     fopen_s(&pFile,cfilename, "rb");    //将文件放入pFile
     if (pFile == NULL)                  //文件为空
     {
