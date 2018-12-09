@@ -50,7 +50,7 @@ float GLCamera::getDist()
 /******************************************************************************
  *                             Operation
  *****************************************************************************/
-/* 摄像机绕n、v、u轴旋转的计算函数*/
+//摄像机绕n、v、u轴旋转的计算函数
 void GLCamera::roll(float angle)
 {
     float cs=cos(angle*3.14159265/180);
@@ -105,7 +105,7 @@ void GLCamera::pitch(float angle)
     setModelViewMatrix();
 }
 
-/* 摄像机绕三个轴平移的计算函数*/
+// 摄像机绕三个轴平移的计算函数
 void GLCamera::slide(float du, float dv, float dn)
 {
     //std::cout<<"u.x:"<<u.x()<<std::endl;

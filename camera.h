@@ -92,11 +92,8 @@ using namespace Eigen;
 class GLCamera
 {
 public:
-    /* 构造函数和析构函数 */
+    // 构造函数和析构函数
     GLCamera(){}
-    /*void setCamera( float eyeX, float eyeY, float eyeZ,
-              float lookX, float lookY, float lookZ,
-              float upX, float upY, float upZ);*/
     void setCamera(const Vector3d& pos, const Vector3d& target, const Vector3d& up);
     void setModelViewMatrix();
     void setShape(float viewAngle,float aspect,float Near,float Far);
@@ -109,16 +106,11 @@ public:
 
 
 private:
-/* 摄像机属性 */
+// 摄像机属性
     Vector3d m_pos;
     Vector3d m_target;
     Vector3d m_up;
     Vector3d u,v,n;
-    /*
-    Point3  eye,look,up;
-    Vector3 u,v,n;
-    float   viewAngle, aspect, nearDist, farDist;
-    */
 
 };
 
