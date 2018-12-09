@@ -5,7 +5,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
     tranX = 0.0;
     tranY = 0.0;
-    tranZ = 2.0;    //-10
+    tranZ = 0.0;
     rotationX = 0.0;
     rotationY = 0.0;
     rotationZ = 0.0;
@@ -58,7 +58,7 @@ void glwidget::resizeGL(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     GLfloat x = GLfloat(w) / GLfloat(h);
-    glFrustum(-x,+x,-1.0,+1.0,4.0,15.0);
+    glFrustum(-x,+x,-1.0,+1.0,4.0,100.0);
     glMatrixMode(GL_MODELVIEW);
     //cam.setShape(45.0,x, 0.1, 100.0);
 }
@@ -113,8 +113,8 @@ void glwidget::drawBase()
     glBegin(GL_POLYGON);
     glColor3f(0.5,0.50,0.5);
 
-//    glVertex3f(0,0,0);
-//    glVertex3f(0,0,0.5);
+    //    glVertex3f(0,0,0);
+    //    glVertex3f(0,0,0.5);
 
     glVertex3f(0,0,0);
     glVertex3f(3.5,0,0);
@@ -140,7 +140,7 @@ void glwidget::drawTri()
     //glLoadIdentity();
     //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
-    glTranslatef(tranX,tranY,tranZ-3.0f);
+    glTranslatef(tranX,tranY,tranZ);//-3.0f);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
@@ -205,19 +205,6 @@ void glwidget::mouseReleaseEvent(QMouseEvent *event)
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
 {
-    //    GLfloat dx = GLfloat(event->x() - lastPos.x()) / width();
-    //    GLfloat dy = GLfloat(event->y() - lastPos.y()) / height();
-    //    if(event->buttons() & Qt::LeftButton){
-    //        rotationX -= 180 * dy;
-    //        rotationY -= 180 * dx;
-    //        updateGL();
-    //    }
-    //    else if(event->buttons() & Qt::RightButton){
-    //        tranX += 5*dx;
-    //        tranY -= 5*dy;
-    //        updateGL();
-    //    }
-    //    lastPos = event->pos();
     int dx = event->x() - lastPos.x();
     int dy = event->y() - lastPos.y();
     //qDebug("dx:%d,dy:%d",dx,dy);
@@ -240,7 +227,7 @@ void glwidget::mouseMoveEvent(QMouseEvent *event)
 void glwidget::wheelEvent(QWheelEvent *event)
 {
     //tranZ += -event->delta()*0.001f;
-    int dz=-event->delta()*0.01f;
+    float dz=-event->delta()*0.01f;
     cam.slide(0,0,dz);
     updateGL();
 }
@@ -269,7 +256,7 @@ void glwidget::keyPressEvent(QKeyEvent *event)
         updateGL();
         break;
 
-    //相机转动
+        //相机转动
     case Qt::Key_I:
         RotateY(-1.0f);
         updateGL();
@@ -287,7 +274,7 @@ void glwidget::keyPressEvent(QKeyEvent *event)
         updateGL();
         break;
 
-    //其他
+        //其他
     case Qt::Key_L:
         qDebug("Key_L ");
         break;
@@ -315,15 +302,46 @@ void glwidget::keyPressEvent(QKeyEvent *event)
 /******************************************************************************
  *                             Logic
  *****************************************************************************/
+#include <iostream>
 void glwidget::motionDisplay(){
+
+    //GLdouble * m;
+    //m = cam.getM();
+    double m[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, m);
+
+    Eigen::MatrixXd T(3, 3);
+    T << m[0], m[4], m[8],
+            m[1], m[5], m[9],
+            m[2], m[6], m[10];
+    Eigen::Vector3d p_cam(motion.dx, motion.dy, 0);
+    Eigen::Vector3d p_world = T.inverse() * p_cam;
+    std::cout<<"T: "<<T<<std::endl;
+//    std::cout<<"p_cam: "<<p_cam<<std::endl;
+//    std::cout<<"p_world: "<<p_world<<std::endl;
+
+    tranX += p_world(0);
+    tranY -= p_world(1);
+    tranZ -= p_world(2);
+    std::cout<<"tranX: "<<tranX<<std::endl;
+    std::cout<<"tranY: "<<tranY<<std::endl;
+    std::cout<<"tranZ: "<<tranZ<<std::endl;
+
+    //    rotationX += 180.0f*motion.dy;
+    //    rotationY += 180.0f*motion.dx;
+
     motion.dx = motion.dx*(1-u);
     motion.dy = motion.dy*(1-u);
-
-    tranX += motion.dx;
-    tranY -= motion.dy;
-    rotationX += 180.0f*motion.dy;
-    rotationY += 180.0f*motion.dx;
     updateGL();
+
+    //    motion.dx = motion.dx*(1-u);
+    //    motion.dy = motion.dy*(1-u);
+
+    //    tranX += motion.dx;
+    //    tranY -= motion.dy;
+    //    rotationX += 180.0f*motion.dy;
+    //    rotationY += 180.0f*motion.dx;
+    //    updateGL();
 }
 
 

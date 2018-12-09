@@ -65,6 +65,7 @@ private:
 
     GLfloat u; //friction cof
 
+    // mouse motion
     struct Motion{
         GLfloat dx;
         GLfloat dy;
