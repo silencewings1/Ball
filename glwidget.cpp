@@ -9,12 +9,13 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationX = 0.0;
     rotationY = 0.0;
     rotationZ = 0.0;
-    //rotationX = -21.0;
-    //rotationY = -57.0;
-    //rotationZ = -0.0;
-    ball.x = 2;
+    u = 0.1f;
+    motion.dx = 0.0f;
+    motion.dy = 0.0f;
 
-    connect(this,SIGNAL(sendMotion(const float *)),this,SLOT(motionDisplay(const float *)),Qt::QueuedConnection);
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(motionDisplay()));
+    timer->start(100);
 
 }
 
@@ -139,7 +140,7 @@ void glwidget::drawTri()
     //glLoadIdentity();
     //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
-    glTranslatef(tranX,tranY,tranZ-3.0);
+    glTranslatef(tranX,tranY,tranZ-3.0f);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
@@ -196,11 +197,10 @@ void glwidget::mousePressEvent(QMouseEvent *event)
     lastPos = event->pos();
 }
 
-void glwidget::mouseReleaseEvent(QMouseEvent *event){
-    GLfloat motion[2];
-    motion[0] = GLfloat(event->x() - lastPos.x()) / width();
-    motion[1] = GLfloat(event->y() - lastPos.y()) / height();
-    emit sendMotion(motion);
+void glwidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    motion.dx += GLfloat(event->x() - lastPos.x()) / width();
+    motion.dy += GLfloat(event->y() - lastPos.y()) / width();
 }
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
@@ -315,23 +315,15 @@ void glwidget::keyPressEvent(QKeyEvent *event)
 /******************************************************************************
  *                             Logic
  *****************************************************************************/
-void glwidget::motionDisplay(const float * motion){
-    GLfloat dx = motion[0];
-    GLfloat dy = motion[1];
-    qDebug("Pos: %f %f",dx,dy);
-    GLfloat u = 0.1f;
-    GLfloat t = 0.0f;
-    while(abs(1-u*t)>0.0f){
-        dx *= 1-u*t;
-        dy *= 1-u*t;
-        tranX += dx;
-        tranY -= dy;
-        rotationX += 180.0f*dy;
-        rotationY += 180.0f*dx;
-        t++;
-        Sleep(100);
-        updateGL();
-    }
+void glwidget::motionDisplay(){
+    motion.dx = motion.dx*(1-u);
+    motion.dy = motion.dy*(1-u);
+
+    tranX += motion.dx;
+    tranY -= motion.dy;
+    rotationX += 180.0f*motion.dy;
+    rotationY += 180.0f*motion.dx;
+    updateGL();
 }
 
 
