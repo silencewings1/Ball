@@ -59,8 +59,8 @@ void glwidget::resizeGL(int w, int h)
     glLoadIdentity();
     GLfloat x = GLfloat(w) / GLfloat(h);
     glFrustum(-x,+x,-1.0,+1.0,4.0,100.0);
+    //cam.setShape(45.0,x, 4.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
-    //cam.setShape(45.0,x, 0.1, 100.0);
 }
 
 void glwidget::paintGL()
@@ -314,13 +314,13 @@ void glwidget::motionDisplay(){
     T << m[0], m[4], m[8],
             m[1], m[5], m[9],
             m[2], m[6], m[10];
-    Eigen::Vector3d p_cam(motion.dx, motion.dy, 0);
+    Eigen::Vector3d p_cam(-motion.dx, motion.dy, 0);
     Eigen::Vector3d p_world = T.inverse() * p_cam;
     std::cout<<"T: "<<T<<std::endl;
 //    std::cout<<"p_cam: "<<p_cam<<std::endl;
 //    std::cout<<"p_world: "<<p_world<<std::endl;
 
-    tranX += p_world(0);
+    tranX -= p_world(0);
     tranY -= p_world(1);
     tranZ -= p_world(2);
     std::cout<<"tranX: "<<tranX<<std::endl;
