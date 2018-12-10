@@ -103,18 +103,12 @@ public:
     void slide(float du, float dv, float dn);
     float getDist();
 
-    GLdouble * getM(){return m;}
-    Vector3d getPos(){return m_pos;}
-
 private:
     // 摄像机属性
     Vector3d m_pos;
     Vector3d m_target;
     Vector3d m_up;
     Vector3d u,v,n;
-
-    // transformation matrix
-    GLdouble m[16];
 
 };
 

@@ -69,6 +69,11 @@ private:
     struct Motion{
         GLfloat dx;
         GLfloat dy;
+        double m[16]={1,0,0,0,
+                      0,1,0,0,
+                      0,0,1,0,
+                      0,0,0,1};
+        bool flag = false;
     };
     Motion motion;
 

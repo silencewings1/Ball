@@ -22,7 +22,7 @@ void GLCamera::setCamera(const Vector3d& pos, const Vector3d& target, const Vect
 //计算变换后的视点矩阵
 void GLCamera::setModelViewMatrix()
 {
-    //double m[16];
+    double m[16];
     m[0]=u.x(); m[4]=u.y(); m[8]=u.z(); m[12]=-m_pos.dot(u);
     m[1]=v.x(); m[5]=v.y(); m[9]=v.z(); m[13]=-m_pos.dot(v);
     m[2]=n.x(); m[6]=n.y(); m[10]=n.z(); m[14]=-m_pos.dot(n);

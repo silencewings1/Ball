@@ -15,7 +15,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(motionDisplay()));
-    timer->start(100);
+    timer->start(50);
 
 }
 
@@ -58,7 +58,7 @@ void glwidget::resizeGL(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     GLfloat x = GLfloat(w) / GLfloat(h);
-    glFrustum(-x,+x,-1.0,+1.0,4.0,100.0);
+    glFrustum(-0.5*x,+0.5*x,-0.5,+0.5,4.0,100.0);
     //cam.setShape(45.0,x, 4.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
 }
@@ -71,7 +71,7 @@ void glwidget::paintGL()
 
     // 重置当前模型的观察矩阵
     drawBase();
-    draw();
+    //draw();
     if(isRead)
         drawTri();
 
@@ -195,6 +195,11 @@ void glwidget::getTriangle(QVector<Triangle> triangleList)
 void glwidget::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
+    if (event->buttons() & Qt::LeftButton)
+    {
+        glGetDoublev(GL_MODELVIEW_MATRIX, motion.m);
+        qDebug("get matrix");
+    }
 }
 
 void glwidget::mouseReleaseEvent(QMouseEvent *event)
@@ -305,10 +310,7 @@ void glwidget::keyPressEvent(QKeyEvent *event)
 #include <iostream>
 void glwidget::motionDisplay(){
 
-    //GLdouble * m;
-    //m = cam.getM();
-    double m[16];
-    glGetDoublev(GL_MODELVIEW_MATRIX, m);
+    double * m = motion.m;
 
     Eigen::MatrixXd T(3, 3);
     T << m[0], m[4], m[8],
@@ -317,12 +319,12 @@ void glwidget::motionDisplay(){
     Eigen::Vector3d p_cam(-motion.dx, motion.dy, 0);
     Eigen::Vector3d p_world = T.inverse() * p_cam;
     std::cout<<"T: "<<T<<std::endl;
-//    std::cout<<"p_cam: "<<p_cam<<std::endl;
-//    std::cout<<"p_world: "<<p_world<<std::endl;
+    //    std::cout<<"p_cam: "<<p_cam<<std::endl;
+    //    std::cout<<"p_world: "<<p_world<<std::endl;
 
-    tranX -= p_world(0);
-    tranY -= p_world(1);
-    tranZ -= p_world(2);
+    tranX -= p_world(0)/2.0;
+    tranY -= p_world(1)/2.0;
+    tranZ -= p_world(2)/2.0;
     std::cout<<"tranX: "<<tranX<<std::endl;
     std::cout<<"tranY: "<<tranY<<std::endl;
     std::cout<<"tranZ: "<<tranZ<<std::endl;
