@@ -1,4 +1,5 @@
 #include "glwidget.h"
+#include <iostream>
 
 glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
 {
@@ -9,14 +10,15 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationX = 0.0;
     rotationY = 0.0;
     rotationZ = 0.0;
-    u = 0.1f;
-    motion.dx = 0.0f;
-    motion.dy = 0.0f;
+    u = 0.1;
+    g = 0.02;
+    radius = 0.5;
+    motion.dx = 0.0;
+    motion.dy = 0.0;
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(motionDisplay()));
-    timer->start(50);
-
+    timer->start(20);
 }
 
 glwidget::~glwidget()
@@ -46,7 +48,7 @@ void glwidget::initializeGL()
 
     setFocusPolicy(Qt::StrongFocus);
 
-    Vector3d pos(0.0, 0.0, 10.0);
+    Vector3d pos(0.0, 0.0, 30.0);
     Vector3d target(0.0, 0.0, 0.0);
     Vector3d up(0.0, 1.0, 0.0);
     cam.setCamera(pos, target, up);
@@ -111,15 +113,18 @@ void glwidget::drawBase()
     glRotatef(0, 0.0, 0.0, 1.0);
 
     glBegin(GL_POLYGON);
-    glColor3f(0.5,0.50,0.5);
+    glColor3f(0.5,0.5,0.5);
 
     //    glVertex3f(0,0,0);
-    //    glVertex3f(0,0,0.5);
+    //    glVertex3f(3.5,0,0);
+    //    glVertex3f(3.5,3.5,0);
+    //    glVertex3f(0,3.5,0);
 
-    glVertex3f(0,0,0);
-    glVertex3f(3.5,0,0);
+    // larger base plane
+    glVertex3f(-3.5,-3.5,0);
+    glVertex3f(3.5,-3.5,0);
     glVertex3f(3.5,3.5,0);
-    glVertex3f(0,3.5,0);
+    glVertex3f(-3.5,3.5,0);
 
     glEnd();
 
@@ -146,7 +151,7 @@ void glwidget::drawTri()
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
 
     GLfloat a = 1.0f;
-    for(int i = 0;i<myList.size();i++)
+    for(int i = 0;i<ballVList.size();i++)
     {
 
         //            glBegin(GL_TRIANGLES);
@@ -159,14 +164,14 @@ void glwidget::drawTri()
 
         glBegin(GL_LINES);
         glColor3f(0.3f,0.3f,1.0f);
-        glVertex3f(myList[i].V[0].x/a,myList[i].V[0].y/a,myList[i].V[0].z/a);
-        glVertex3f(myList[i].V[1].x/a,myList[i].V[1].y/a,myList[i].V[1].z/a);
+        glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
+        glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
 
-        glVertex3f(myList[i].V[1].x/a,myList[i].V[1].y/a,myList[i].V[1].z/a);
-        glVertex3f(myList[i].V[2].x/a,myList[i].V[2].y/a,myList[i].V[2].z/a);
+        glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
+        glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
 
-        glVertex3f(myList[i].V[2].x/a,myList[i].V[2].y/a,myList[i].V[2].z/a);
-        glVertex3f(myList[i].V[0].x/a,myList[i].V[0].y/a,myList[i].V[0].z/a);
+        glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
+        glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
         glEnd();
 
         //            glShadeModel(GL_FLAT);
@@ -185,7 +190,7 @@ void glwidget::drawTri()
 
 void glwidget::getTriangle(QVector<Triangle> triangleList)
 {
-    myList = triangleList;
+    ballVList = triangleList;
     isRead = true;
 }
 
@@ -196,16 +201,13 @@ void glwidget::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
     if (event->buttons() & Qt::LeftButton)
-    {
         glGetDoublev(GL_MODELVIEW_MATRIX, motion.m);
-        qDebug("get matrix");
-    }
 }
 
 void glwidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    motion.dx += GLfloat(event->x() - lastPos.x()) / width();
-    motion.dy += GLfloat(event->y() - lastPos.y()) / width();
+    motion.dx += GLdouble(event->x() - lastPos.x()) / width();
+    motion.dy += GLdouble(event->y() - lastPos.y()) / width();
 }
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
@@ -278,27 +280,6 @@ void glwidget::keyPressEvent(QKeyEvent *event)
         RotateX(1.0f);
         updateGL();
         break;
-
-        //其他
-    case Qt::Key_L:
-        qDebug("Key_L ");
-        break;
-    case Qt::Key_Up:
-        tranY += 0.05f;
-        updateGL();
-        break;
-    case Qt::Key_Down:
-        tranY -= 0.05f;
-        updateGL();
-        break;
-    case Qt::Key_Left:
-        tranX -= 0.05f;
-        updateGL();
-        break;
-    case Qt::Key_Right:
-        tranX += 0.05f;
-        updateGL();
-        break;
     }
 
 }
@@ -307,11 +288,8 @@ void glwidget::keyPressEvent(QKeyEvent *event)
 /******************************************************************************
  *                             Logic
  *****************************************************************************/
-#include <iostream>
 void glwidget::motionDisplay(){
-
     double * m = motion.m;
-
     Eigen::MatrixXd T(3, 3);
     T << m[0], m[4], m[8],
             m[1], m[5], m[9],
@@ -319,8 +297,6 @@ void glwidget::motionDisplay(){
     Eigen::Vector3d p_cam(-motion.dx, motion.dy, 0);
     Eigen::Vector3d p_world = T.inverse() * p_cam;
     std::cout<<"T: "<<T<<std::endl;
-    //    std::cout<<"p_cam: "<<p_cam<<std::endl;
-    //    std::cout<<"p_world: "<<p_world<<std::endl;
 
     tranX -= p_world(0)/2.0;
     tranY -= p_world(1)/2.0;
@@ -329,21 +305,24 @@ void glwidget::motionDisplay(){
     std::cout<<"tranY: "<<tranY<<std::endl;
     std::cout<<"tranZ: "<<tranZ<<std::endl;
 
-    //    rotationX += 180.0f*motion.dy;
-    //    rotationY += 180.0f*motion.dx;
+    if(tranZ-radius < 0){
+        tranZ = radius-g/2.0;
+        p_world(2) = -p_world(2)*0.9;
+    }else{
+        p_world(2) += g;
+    }
+    p_cam = T * p_world;
+    motion.dx = -p_cam(0);
+    motion.dy = p_cam(1);
 
-    motion.dx = motion.dx*(1-u);
-    motion.dy = motion.dy*(1-u);
+    if(tranZ-radius <= 0){
+        motion.dx = motion.dx*(1-u);
+        motion.dy = motion.dy*(1-u);
+        //        rotationX += 180.0*motion.dy;
+        //        rotationY += 180.0*motion.dx;
+    }
+
     updateGL();
-
-    //    motion.dx = motion.dx*(1-u);
-    //    motion.dy = motion.dy*(1-u);
-
-    //    tranX += motion.dx;
-    //    tranY -= motion.dy;
-    //    rotationX += 180.0f*motion.dy;
-    //    rotationY += 180.0f*motion.dx;
-    //    updateGL();
 }
 
 

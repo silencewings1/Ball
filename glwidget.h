@@ -25,7 +25,8 @@ public:
 
     //读写stl的接口函数
     void getTriangle(QVector<Triangle> triangleList);
-    void setFrictionCof(GLfloat value){this->u = value;}
+    void setFrictionCof(GLdouble value){u = value;}
+    void setRadius(GLdouble value){radius = value;}
 
 protected:
     //GL related
@@ -48,7 +49,7 @@ private:
     void draw();
     void drawTri();
     void drawBase();
-    QVector<Triangle> myList;
+    QVector<Triangle> ballVList;
     bool isRead = false;
 
     GLCamera cam;
@@ -63,17 +64,18 @@ private:
     GLfloat rotationZ;
     QPoint lastPos;
 
-    GLfloat u; //friction cof
+    GLdouble u; //friction cof
+    GLdouble g; //gravity cof
+    GLdouble radius; //ball radius
 
     // mouse motion
     struct Motion{
-        GLfloat dx;
-        GLfloat dy;
+        GLdouble dx;
+        GLdouble dy;
         double m[16]={1,0,0,0,
                       0,1,0,0,
                       0,0,1,0,
                       0,0,0,1};
-        bool flag = false;
     };
     Motion motion;
 
