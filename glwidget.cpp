@@ -12,6 +12,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     rotationZ = 0.0;
     u = 0.1;
     g = 0.02;
+    L = 0.1;
     radius = 0.5;
     motion.dx = 0.0;
     motion.dy = 0.0;
@@ -307,7 +308,7 @@ void glwidget::motionDisplay(){
 
     if(tranZ-radius < 0){
         tranZ = radius-g/2.0;
-        p_world(2) = -p_world(2)*0.9;
+        p_world(2) = -p_world(2)*(1-L);
     }else{
         p_world(2) += g;
     }

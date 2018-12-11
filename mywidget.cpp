@@ -61,10 +61,47 @@ void myWidget::on_pushButton_clicked()
     }
 }
 
+
+void myWidget::on_pushButton_reset_pressed()
+{
+    if(Myglwidget){
+        Myglwidget->setRadius(0.5);
+        Myglwidget->setTranX(0.0);
+        Myglwidget->setTranY(0.0);
+        Myglwidget->setTranZ(Myglwidget->getRadius());
+        Myglwidget->setRotX(0.0);
+        Myglwidget->setRotY(0.0);
+        Myglwidget->setRotZ(0.0);
+        Myglwidget->setMotion(0.0,0.0);
+
+        //    Vector3d pos(0.0, 0.0, 30.0);
+        //    Vector3d target(0.0, 0.0, 0.0);
+        //    Vector3d up(0.0, 1.0, 0.0);
+        //    Myglwidget->cam.setCamera(pos, target, up);
+    }
+
+}
+
+void myWidget::on_pushButton_exit_pressed()
+{
+    exit(0);
+}
+
 /******************************************************************************
  *                            Silder Events
  *****************************************************************************/
 void myWidget::on_horizontalSlider_valueChanged(int value)
 {
-    Myglwidget->setFrictionCof(GLfloat(value)/100.0f);
+    Myglwidget->setFrictionCof(GLdouble(value)/100.0);
+}
+
+
+void myWidget::on_horizontalSlider_g_valueChanged(int value)
+{
+    Myglwidget->setGravity(GLdouble(value)/1000.0);
+}
+
+void myWidget::on_horizontalSlider_L_valueChanged(int value)
+{
+    Myglwidget->setLossCof(GLdouble(value)/100.0);
 }
