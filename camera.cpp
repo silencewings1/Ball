@@ -116,6 +116,7 @@ void GLCamera::slide(float du, float dv, float dn)
     m_target(1) = m_target(0)+du*u.y()+dv*v.y()+dn*n.y();
     m_target(2) = m_target(0)+du*u.z()+dv*v.z()+dn*n.z();
     setModelViewMatrix();
+
 }
 
 

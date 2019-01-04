@@ -61,8 +61,7 @@ void myWidget::on_pushButton_clicked()
     }
 }
 
-
-void myWidget::on_pushButton_reset_pressed()
+void myWidget::on_reset_ball_pressed()
 {
     if(Myglwidget){
         Myglwidget->setRadius(0.5);
@@ -73,13 +72,17 @@ void myWidget::on_pushButton_reset_pressed()
         Myglwidget->setRotY(0.0);
         Myglwidget->setRotZ(0.0);
         Myglwidget->setMotion(0.0,0.0);
-
-        //    Vector3d pos(0.0, 0.0, 30.0);
-        //    Vector3d target(0.0, 0.0, 0.0);
-        //    Vector3d up(0.0, 1.0, 0.0);
-        //    Myglwidget->cam.setCamera(pos, target, up);
     }
+}
 
+void myWidget::on_reset_view_pressed()
+{
+    if(Myglwidget){
+        Vector3d pos(0.0, 0.0, 30.0);
+        Vector3d target(0.0, 0.0, 0.0);
+        Vector3d up(0.0, 1.0, 0.0);
+        Myglwidget->setCam(pos, target, up);
+    }
 }
 
 void myWidget::on_pushButton_exit_pressed()
@@ -103,5 +106,5 @@ void myWidget::on_horizontalSlider_g_valueChanged(int value)
 
 void myWidget::on_horizontalSlider_L_valueChanged(int value)
 {
-    Myglwidget->setLossCof(GLdouble(value)/100.0);
+    Myglwidget->setLossCof(GLdouble(value)/10.0);
 }

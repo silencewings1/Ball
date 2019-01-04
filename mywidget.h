@@ -31,8 +31,6 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_pushButton_reset_pressed();
-
     void on_horizontalSlider_valueChanged(int value);
 
     void on_horizontalSlider_g_valueChanged(int value);
@@ -40,6 +38,10 @@ private slots:
     void on_horizontalSlider_L_valueChanged(int value);
 
     void on_pushButton_exit_pressed();
+
+    void on_reset_ball_pressed();
+
+    void on_reset_view_pressed();
 
 private:
      QVector<Triangle> triangleList;

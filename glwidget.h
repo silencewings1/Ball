@@ -57,6 +57,9 @@ public:
     void setRadius(GLdouble value){radius = value;}
     GLdouble getRadius(){return radius;}
     void setMotion(GLdouble x,GLdouble y){motion.dx=x;motion.dy=y;}
+    void setCam(const Vector3d& pos, const Vector3d& target, const Vector3d& up){
+        cam.setCamera(pos, target, up);
+    }
 
 private:
     void draw();
@@ -76,6 +79,7 @@ private:
     GLfloat rotationY;
     GLfloat rotationZ;
     QPoint lastPos;
+    bool btn_right_release;
 
     GLdouble u; //friction cof
     GLdouble g; //gravity cof

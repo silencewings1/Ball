@@ -14,6 +14,7 @@ glwidget::glwidget(QWidget *parent) : QGLWidget(parent)
     g = 0.02;
     L = 0.1;
     radius = 0.5;
+    btn_right_release = false;
     motion.dx = 0.0;
     motion.dy = 0.0;
 
@@ -80,28 +81,40 @@ void glwidget::paintGL()
 
 }
 
-void glwidget::draw()
-{
-    glMatrixMode(GL_MODELVIEW);
-    //RotateX(1);
-    //glLoadIdentity();
-    //cam.setModelViewMatrix();
-    //glTranslatef(0.0, 0.0, -5.0);
-    glTranslatef(tranX,tranY,tranZ);
-    glRotatef(rotationX, 1.0, 0.0, 0.0);
-    glRotatef(rotationY, 0.0, 1.0, 0.0);
-    glRotatef(rotationZ, 0.0, 0.0, 1.0);
+//void glwidget::draw()
+//{
+//    glMatrixMode(GL_MODELVIEW);
+//    //RotateX(1);
+//    //glLoadIdentity();
+//    //cam.setModelViewMatrix();
+//    //glTranslatef(0.0, 0.0, -5.0);
 
-    GLUquadricObj *quadObj; //创建一个二次曲面
-    quadObj = gluNewQuadric();
-    gluQuadricDrawStyle(quadObj,GLU_SILHOUETTE);
-    glShadeModel(GL_SMOOTH);
-    glColor3f(0.0f,0.0f,1.0f);
-    gluSphere(quadObj,0.5f,50.0f,50.0f);
-    gluDeleteQuadric(quadObj);
-    //glutSolidSphere(2,50,50);
+//    GLfloat xtmp = rotationX;
+//    GLfloat ytmp = rotationY;
+//    GLfloat ztmp = rotationZ;
+//    rotationX = 0.0;
+//    rotationY = 0.0;
+//    rotationZ = 0.0;
 
-}
+//    glTranslatef(tranX,tranY,tranZ);
+//    glRotatef(rotationX, 1.0, 0.0, 0.0);
+//    glRotatef(rotationY, 0.0, 1.0, 0.0);
+//    glRotatef(rotationZ, 0.0, 0.0, 1.0);
+
+//    rotationX = xtmp;
+//    rotationY = ytmp;
+//    rotationZ = ztmp;
+
+//    GLUquadricObj *quadObj; //创建一个二次曲面
+//    quadObj = gluNewQuadric();
+//    gluQuadricDrawStyle(quadObj,GLU_SILHOUETTE);
+//    glShadeModel(GL_SMOOTH);
+//    glColor3f(0.0f,0.0f,1.0f);
+//    gluSphere(quadObj,0.5f,50.0f,50.0f);
+//    gluDeleteQuadric(quadObj);
+//    //glutSolidSphere(2,50,50);
+
+//}
 
 void glwidget::drawBase()
 {
@@ -146,10 +159,22 @@ void glwidget::drawTri()
     //glLoadIdentity();
     //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
+
+    //    GLfloat xtmp = rotationX;
+    //    GLfloat ytmp = rotationY;
+    //    GLfloat ztmp = rotationZ;
+    //    rotationX = 0.0;
+    //    rotationY = 0.0;
+    //    rotationZ = 0.0;
+
     glTranslatef(tranX,tranY,tranZ);//-3.0f);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
+
+    //    rotationX = xtmp;
+    //    rotationY = ytmp;
+    //    rotationZ = ztmp;
 
     GLfloat a = 1.0f;
     for(int i = 0;i<ballVList.size();i++)
@@ -201,14 +226,33 @@ void glwidget::getTriangle(QVector<Triangle> triangleList)
 void glwidget::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
-    if (event->buttons() & Qt::LeftButton)
-        glGetDoublev(GL_MODELVIEW_MATRIX, motion.m);
+
+    GLfloat xtmp = rotationX;
+    GLfloat ytmp = rotationY;
+    GLfloat ztmp = rotationZ;
+    rotationX = 0.0;
+    rotationY = 0.0;
+    rotationZ = 0.0;
+    updateGL();
+    if (event->buttons() & Qt::LeftButton){
+        if(btn_right_release == true){
+            glGetDoublev(GL_MODELVIEW_MATRIX, motion.m);
+            btn_right_release = false;
+        }
+    }
+    rotationX = xtmp;
+    rotationY = ytmp;
+    rotationZ = ztmp;
 }
 
 void glwidget::mouseReleaseEvent(QMouseEvent *event)
 {
     motion.dx += GLdouble(event->x() - lastPos.x()) / width();
     motion.dy += GLdouble(event->y() - lastPos.y()) / width();
+
+    if (Qt::RightButton == event->button()){
+        btn_right_release = true;
+    }
 }
 
 void glwidget::mouseMoveEvent(QMouseEvent *event)
@@ -234,7 +278,6 @@ void glwidget::mouseMoveEvent(QMouseEvent *event)
 
 void glwidget::wheelEvent(QWheelEvent *event)
 {
-    //tranZ += -event->delta()*0.001f;
     float dz=-event->delta()*0.01f;
     cam.slide(0,0,dz);
     updateGL();
@@ -302,25 +345,33 @@ void glwidget::motionDisplay(){
     tranX -= p_world(0)/2.0;
     tranY -= p_world(1)/2.0;
     tranZ -= p_world(2)/2.0;
-    std::cout<<"tranX: "<<tranX<<std::endl;
-    std::cout<<"tranY: "<<tranY<<std::endl;
-    std::cout<<"tranZ: "<<tranZ<<std::endl;
+    //    std::cout<<"tranX: "<<tranX<<std::endl;
+    //    std::cout<<"tranY: "<<tranY<<std::endl;
+    //    std::cout<<"tranZ: "<<tranZ<<std::endl;
+    //    std::cout<<"rotationX: "<<rotationX<<std::endl;
+    //    std::cout<<"rotationY: "<<rotationY<<std::endl;
+    //    std::cout<<"rotationZ: "<<rotationZ<<std::endl;
 
     if(tranZ-radius < 0){
-        tranZ = radius-g/2.0;
+        tranZ = radius-g/10.0;
         p_world(2) = -p_world(2)*(1-L);
     }else{
         p_world(2) += g;
     }
+
+    // ball rotation
+    if(tranZ-radius <= 0){
+        rotationX += 180.0*motion.dy;
+        rotationY += 180.0*motion.dx;
+    }
+
+    // ball transition
     p_cam = T * p_world;
     motion.dx = -p_cam(0);
     motion.dy = p_cam(1);
-
     if(tranZ-radius <= 0){
         motion.dx = motion.dx*(1-u);
         motion.dy = motion.dy*(1-u);
-        //        rotationX += 180.0*motion.dy;
-        //        rotationY += 180.0*motion.dx;
     }
 
     updateGL();
