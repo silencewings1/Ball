@@ -81,55 +81,14 @@ void glwidget::paintGL()
     glLoadIdentity();
     cam.setModelViewMatrix();
 
-    // 重置当前模型的观察矩阵
-
-    //draw();
     if(isRead)
         drawTri();
     drawBase();
-
 }
-
-//void glwidget::draw()
-//{
-//    glMatrixMode(GL_MODELVIEW);
-//    //RotateX(1);
-//    //glLoadIdentity();
-//    //cam.setModelViewMatrix();
-//    //glTranslatef(0.0, 0.0, -5.0);
-
-//    GLfloat xtmp = rotationX;
-//    GLfloat ytmp = rotationY;
-//    GLfloat ztmp = rotationZ;
-//    rotationX = 0.0;
-//    rotationY = 0.0;
-//    rotationZ = 0.0;
-
-//    glTranslatef(tranX,tranY,tranZ);
-//    glRotatef(rotationX, 1.0, 0.0, 0.0);
-//    glRotatef(rotationY, 0.0, 1.0, 0.0);
-//    glRotatef(rotationZ, 0.0, 0.0, 1.0);
-
-//    rotationX = xtmp;
-//    rotationY = ytmp;
-//    rotationZ = ztmp;
-
-//    GLUquadricObj *quadObj; //创建一个二次曲面
-//    quadObj = gluNewQuadric();
-//    gluQuadricDrawStyle(quadObj,GLU_SILHOUETTE);
-//    glShadeModel(GL_SMOOTH);
-//    glColor3f(0.0f,0.0f,1.0f);
-//    gluSphere(quadObj,0.5f,50.0f,50.0f);
-//    gluDeleteQuadric(quadObj);
-//    //glutSolidSphere(2,50,50);
-
-//}
 
 void glwidget::drawBase()
 {
     glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
-    //glTranslatef(-1.5,-1.5,tranZ);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     glPushMatrix();
@@ -143,20 +102,8 @@ void glwidget::drawBase()
     glColor4f(0.5,0.5,0.5,0.5f);
     glDepthMask(GL_FALSE);
 
-    //    glVertex3f(0,0,0);
-    //    glVertex3f(3.5,0,0);
-    //    glVertex3f(3.5,3.5,0);
-    //    glVertex3f(0,3.5,0);
-
-    // larger base plane
-    //    glVertex3f(-3.5,-3.5,0);
-    //    glVertex3f(3.5,-3.5,0);
-    //    glVertex3f(3.5,3.5,0);
-    //    glVertex3f(-3.5,3.5,0);
-    // glEnd();
-
     glBegin(GL_POLYGON);
-    double u=5;
+    float u = 5.0f;
     glVertex3f(-u,-u,0);
     glVertex3f(u,-u,0);
     glVertex3f(u,u,0);
@@ -178,13 +125,8 @@ void glwidget::drawBase()
 
 void glwidget::drawTri()
 {
-    //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
-    //glLoadIdentity();
     glEnable(GL_LIGHTING);
     glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
-    //cam.setModelViewMatrix();
-    //glTranslatef(0.0, 0.0, -5.0);
     glPushMatrix();
     glDepthMask(GL_TRUE);
     glEnable(GL_COLOR_MATERIAL);
@@ -283,7 +225,6 @@ void glwidget::mouseMoveEvent(QMouseEvent *event)
 {
     int dx = event->x() - lastPos.x();
     int dy = event->y() - lastPos.y();
-    //qDebug("dx:%d,dy:%d",dx,dy);
     if (event->buttons() & Qt::RightButton)
     {
         //右键绕x，y轴旋转

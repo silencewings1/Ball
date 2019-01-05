@@ -181,29 +181,7 @@ QVector<Triangle> stlFile::GetTriangleList()
         }
     }
 
-    //    float avg_x = 0;
-    //    float avg_y = 0;
-    //    float avg_z = 0;
-    //    for(int i = 0;i<zhuanhuan.size();i++)
-    //    {
-    //        avg_x += zhuanhuan[i].V[0].x;
-    //        avg_y += zhuanhuan[i].V[0].y;
-    //        avg_z += zhuanhuan[i].V[0].z;
-    //    }
-    //    avg_x = avg_x/zhuanhuan.size();
-    //    avg_y = avg_y/zhuanhuan.size();
-    //    avg_z = avg_z/zhuanhuan.size();
-
-    //    for(int i = 0;i<zhuanhuan.size();i++)
-    //    {
-    //        zhuanhuan[i].V[0].x = zhuanhuan[i].V[0].x- avg_x;
-    //        zhuanhuan[i].V[0].y = zhuanhuan[i].V[0].y- avg_y;
-    //        zhuanhuan[i].V[0].z = zhuanhuan[i].V[0].z- avg_z;
-    //    }
-
     triangleList = zhuanhuan;
-
-
 
     return triangleList;
 }
