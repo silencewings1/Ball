@@ -15,6 +15,7 @@
 #include <GL/glut.h>
 #include "triangle.h"
 #include "camera.h"
+#include <queue>
 
 class glwidget : public QGLWidget
 {
@@ -96,6 +97,9 @@ private:
                       0,0,0,1};
     };
     Motion motion;
+
+    // center trace
+    std::queue<Point3f> Ctrace;
 
 };
 

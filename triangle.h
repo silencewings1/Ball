@@ -6,6 +6,11 @@ struct Point3f
     float x;
     float y;
     float z;
+
+    Point3f(){}
+    Point3f(float px, float py, float pz){
+        x = px; y = py; z = pz;
+    }
 };
 
 struct Triangle

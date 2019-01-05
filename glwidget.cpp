@@ -36,7 +36,7 @@ void glwidget::initializeGL()
     // 启用阴影平滑
     glShadeModel( GL_SMOOTH );
     // 黑色背景
-    glClearColor( 1.0, 1.0, 1.0, 0.0 );
+    glClearColor( 0.0, 0.0, 0.0, 0.0 );
     // 设置深度缓存
     glClearDepth( 1.0 );
     // 启用深度测试
@@ -47,6 +47,12 @@ void glwidget::initializeGL()
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
     //glutSwapBuffers();//设立双缓冲
+
+    GLfloat light0Position[] = {0.0f, -50.0f, 50.0f, 0.0};
+    glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     setFocusPolicy(Qt::StrongFocus);
 
@@ -69,15 +75,18 @@ void glwidget::resizeGL(int w, int h)
 
 void glwidget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);// 清除屏幕和深度缓存
+    GLfloat light0Position[] = {0.0f, -50.0f, 50.0f, 0.0}; //dot light
+    glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
     glLoadIdentity();
     cam.setModelViewMatrix();
 
     // 重置当前模型的观察矩阵
-    drawBase();
+
     //draw();
     if(isRead)
         drawTri();
+    drawBase();
 
 }
 
@@ -121,13 +130,18 @@ void glwidget::drawBase()
     glMatrixMode(GL_MODELVIEW);
     //glLoadIdentity();
     //glTranslatef(-1.5,-1.5,tranZ);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+
     glTranslatef(0.0,0.0,0.0);
     glRotatef(0, 1.0, 0.0, 0.0);
     glRotatef(0, 0.0, 1.0, 0.0);
     glRotatef(0, 0.0, 0.0, 1.0);
-
+    glEnable(GL_LIGHTING);
     glBegin(GL_POLYGON);
-    glColor3f(0.5,0.5,0.5);
+    glColor4f(0.5,0.5,0.5,0.5f);
+    glDepthMask(GL_FALSE);
 
     //    glVertex3f(0,0,0);
     //    glVertex3f(3.5,0,0);
@@ -135,11 +149,18 @@ void glwidget::drawBase()
     //    glVertex3f(0,3.5,0);
 
     // larger base plane
-    glVertex3f(-3.5,-3.5,0);
-    glVertex3f(3.5,-3.5,0);
-    glVertex3f(3.5,3.5,0);
-    glVertex3f(-3.5,3.5,0);
+    //    glVertex3f(-3.5,-3.5,0);
+    //    glVertex3f(3.5,-3.5,0);
+    //    glVertex3f(3.5,3.5,0);
+    //    glVertex3f(-3.5,3.5,0);
+    // glEnd();
 
+    glBegin(GL_POLYGON);
+    double u=5;
+    glVertex3f(-u,-u,0);
+    glVertex3f(u,-u,0);
+    glVertex3f(u,u,0);
+    glVertex3f(-u,u,0);
     glEnd();
 
     glBegin(GL_LINES);
@@ -148,70 +169,73 @@ void glwidget::drawBase()
     glVertex3f(0,0,3.5);
     glEnd();
 
+    glPopMatrix();
+    glDepthMask(GL_TRUE);
+    glDisable(GL_LIGHTING);
+    glDisable((GL_COLOR_MATERIAL));
+
 }
 
 void glwidget::drawTri()
 {
     //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    // 清除屏幕和深度缓存
     //glLoadIdentity();
-
+    glEnable(GL_LIGHTING);
     glMatrixMode(GL_MODELVIEW);
     //glLoadIdentity();
     //cam.setModelViewMatrix();
     //glTranslatef(0.0, 0.0, -5.0);
-
-    //    GLfloat xtmp = rotationX;
-    //    GLfloat ytmp = rotationY;
-    //    GLfloat ztmp = rotationZ;
-    //    rotationX = 0.0;
-    //    rotationY = 0.0;
-    //    rotationZ = 0.0;
+    glPushMatrix();
+    glDepthMask(GL_TRUE);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
     glTranslatef(tranX,tranY,tranZ);//-3.0f);
     glRotatef(rotationX, 1.0, 0.0, 0.0);
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
 
-    //    rotationX = xtmp;
-    //    rotationY = ytmp;
-    //    rotationZ = ztmp;
+    //    GLfloat a = 1.0f;
+    //    for(int i = 0;i<ballVList.size();i++)
+    //    {
+
+    //        glBegin(GL_LINES);
+    //        glColor3f(0.3f,0.3f,1.0f);
+    //        glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
+    //        glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
+
+    //        glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
+    //        glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
+
+    //        glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
+    //        glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
+    //        glEnd();
+
+    //    }
+
+    //    //    for(int i=1;i<Ctrace.size();i++){
+    //    //        glBegin(GL_LINES);
+    //    //        glColor3f(1.0f,0.0f,0.0f);
+
+    //    //        //glVertex3f()
+    //    //        glEnd();
+    //    //    }
 
     GLfloat a = 1.0f;
+    glBegin(GL_TRIANGLES);
+    glShadeModel(GL_SMOOTH);
+    glColor4f(0.4f, 0.4f, 1.0f,1);
     for(int i = 0;i<ballVList.size();i++)
     {
-
-        //            glBegin(GL_TRIANGLES);
-        //            glColor3f(0.3, 0.3, 1.0);
-        //            glNormal3f(mylist[i].N.x,mylist[i].N.y,mylist[i].N.z);
-        //            glVertex3f(mylist[i].V[0].x/a,mylist[i].V[0].y/a,mylist[i].V[0].z/a);
-        //            glVertex3f(mylist[i].V[1].x/a,mylist[i].V[1].y/a,mylist[i].V[1].z/a);
-        //            glVertex3f(mylist[i].V[2].x/a,mylist[i].V[2].y/a,mylist[i].V[2].z/a);
-        //            glEnd();
-
-        glBegin(GL_LINES);
-        glColor3f(0.3f,0.3f,1.0f);
+        glNormal3f(ballVList[i].N.x,ballVList[i].N.y,ballVList[i].N.z);
         glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
         glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
-
-        glVertex3f(ballVList[i].V[1].x/a,ballVList[i].V[1].y/a,ballVList[i].V[1].z/a);
         glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
-
-        glVertex3f(ballVList[i].V[2].x/a,ballVList[i].V[2].y/a,ballVList[i].V[2].z/a);
-        glVertex3f(ballVList[i].V[0].x/a,ballVList[i].V[0].y/a,ballVList[i].V[0].z/a);
-        glEnd();
-
-        //            glShadeModel(GL_FLAT);
-        //            glEnable(GL_LIGHTING);
-        //            glColor3f(0.4f, 0.4f, 1.0f);
-        //            glBegin(GL_TRIANGLES);
-        //            glNormal3f(mylist[i].N.x,mylist[i].N.y,mylist[i].N.z);
-        //            glVertex3f(mylist[i].V[0].x/a,mylist[i].V[0].y/a,mylist[i].V[0].z/a);
-        //            glVertex3f(mylist[i].V[1].x/a,mylist[i].V[1].y/a,mylist[i].V[1].z/a);
-        //            glVertex3f(mylist[i].V[2].x/a,mylist[i].V[2].y/a,mylist[i].V[2].z/a);
-        //            glEnd();
-        //            glDisable(GL_LIGHTING);
-
     }
+    glEnd();
+    glDisable(GL_LIGHTING);
+    glDisable((GL_COLOR_MATERIAL));
+    glPopMatrix();
 }
 
 void glwidget::getTriangle(QVector<Triangle> triangleList)
@@ -345,12 +369,16 @@ void glwidget::motionDisplay(){
     tranX -= p_world(0)/2.0;
     tranY -= p_world(1)/2.0;
     tranZ -= p_world(2)/2.0;
-    //    std::cout<<"tranX: "<<tranX<<std::endl;
-    //    std::cout<<"tranY: "<<tranY<<std::endl;
-    //    std::cout<<"tranZ: "<<tranZ<<std::endl;
-    //    std::cout<<"rotationX: "<<rotationX<<std::endl;
-    //    std::cout<<"rotationY: "<<rotationY<<std::endl;
-    //    std::cout<<"rotationZ: "<<rotationZ<<std::endl;
+    //    Point3f c(tranX, tranY, tranZ);
+    //    Ctrace.push(c);
+    //    if(Ctrace.size() >= 50)
+    //        Ctrace.pop();
+    std::cout<<"tranX: "<<tranX<<std::endl;
+    std::cout<<"tranY: "<<tranY<<std::endl;
+    std::cout<<"tranZ: "<<tranZ<<std::endl;
+    std::cout<<"rotationX: "<<rotationX<<std::endl;
+    std::cout<<"rotationY: "<<rotationY<<std::endl;
+    std::cout<<"rotationZ: "<<rotationZ<<std::endl;
 
     if(tranZ-radius < 0){
         tranZ = radius-g/10.0;
